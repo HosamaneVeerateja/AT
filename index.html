@@ -1,0 +1,36 @@
+<!DOCTYPE html>  
+<html>  
+<head>  
+  <title>Amount Tracker</title>  
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"></script>  
+  <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>  
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css">  
+</head>  
+<body>  
+  <h1>Amount Tracker</h1>  
+  <form id="entry-form">  
+   <label for="date">Date:</label>  
+   <input type="date" id="date" name="date"><br><br>  
+   <label for="amount">Amount:</label>  
+   <input type="number" id="amount" name="amount"><br><br>  
+   <label for="words">Words:</label>  
+   <textarea id="words" name="words"></textarea><br><br>  
+   <button id="save-button">Save</button>  
+  </form>  
+  <table id="entries-table">  
+   <thead>  
+    <tr>  
+      <th>Date</th>  
+      <th>Amount</th>  
+      <th>Words</th>  
+      <th>Edit</th>  
+    </tr>  
+   </thead>  
+   <tbody>  
+    <!-- entries will be displayed here -->  
+   </tbody>  
+  </table>  
+  <canvas id="graph-canvas"></canvas>  
+  <script src="script.js"></script>  
+</body>  
+</html>
