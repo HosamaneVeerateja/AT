@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expense Tracker</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Expense Tracker</h1>
+        <h2>Add Expense</h2>
+        <form id="expense-form">
+            <div class="form-group">
+                <label for="date">Date:</label>
+                <input type="date" id="date" required>
+            </div>
+            <div class="form-group">
+                <label for="amount">Amount (₹):</label>
+                <input type="number" id="amount" required>
+            </div>
+            <div class="form-group">
+                <label for="category">Category:</label>
+                <input type="text" id="category" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Add Expense</button>
+        </form>
+
+        <h2>Monthly Expenses</h2>
+        <canvas id="expense-chart" width="400" height="200"></canvas>
+        <div id="total-expense">Total Expenses: ₹0.00</div>
+        <div id="expense-list"></div>
+        <button id="reset-button" class="btn btn-primary">Reset</button>
+        <button id="generate-report" class="btn btn-secondary">Generate Report</button>
+    </div>
+
+    <script>
+        const form = document.getElementById('expense-form');
+        const expenseList = document.getElementById('expense-list');
+        const totalExpenseDisplay = document.getElementById('total-expense');
+        const resetButton = document.getElementById('reset-button');
+        const generateReportButton = document.getElementById('generate-report');
+        let expenses = [];
+
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();
+            const date = document.getElementById('date').value;
+            const amount = parseFloat(document.getElementById('amount').value);
+            const category = document.getElementById('category').value;
+
+            // Add the new expense to the expenses array
+            expenses.push({ date, amount, category });
+            updateExpenseList();
+            updateChart();
+            updateTotalExpense();
+            form.reset();
+        });
+
+        resetButton.addEventListener('click', function() {
+            expenses = [];
+            updateExpenseList();
+            updateChart();
+            updateTotalExpense();
+        });
+
+        generateReportButton.addEventListener('click', function() {
+            const report = generateReport();
+            alert(report);
+        });
+
+        function updateExpenseList() {
+            expenseList.innerHTML = '<h3>Expense List</h3>';
+            expenses.forEach(expense => {
+                expenseList.innerHTML += `<p>${expense.date}: ${expense.category} - ₹${expense.amount.toFixed(2)}</p>`;
+            });
+        }
+
+        function updateChart() {
+            const ctx = document.getElementById('expense-chart').getContext('2d');
+            const labels = expenses.map(expense => expense.category);
+            const data = expenses.map(expense => expense.amount);
+
+            // Check if the chart already exists and destroy it before creating a new one
+            if (window.expenseChart) {
+                window.expenseChart.destroy();
+            }
+
+            window.expenseChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Expenses (₹)',
+                        data: data,
+                        backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Amount (₹)'
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Categories'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateTotalExpense() {
+            const totalExpenses = expenses.reduce((acc, expense) => acc + expense.amount, 0);
+            totalExpenseDisplay.textContent = `Total Expenses: ₹${totalExpenses.toFixed(2)}`;
+        }
+
+        function generateReport() {
+            const totalExpenses = expenses.reduce((acc, expense) => acc + expense.amount, 0);
+            const report = `Monthly Expenses Report:\nTotal Expenses: ₹${totalExpenses.toFixed(2)}\n\nDetails:\n${expenses.map(expense => `${expense.date}: ${expense.category} - ₹${expense.amount.toFixed(2)}`).join('\n')}`;
+            return report;
+        }
+    </script>
+</body>
+</html>
